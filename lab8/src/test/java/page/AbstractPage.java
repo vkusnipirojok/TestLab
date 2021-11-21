@@ -20,10 +20,5 @@ public abstract class AbstractPage {
         this.driver = driver;
         PageFactory.initElements(driver, this);
     }
-
-    protected WebElement findElementByLocator(By elementLocator) {
-        return new WebDriverWait(driver, Duration.ofSeconds(WAIT_TIMEOUT_SECONDS))
-                .until(ExpectedConditions.presenceOfElementLocated(elementLocator));
-    }
 }
 

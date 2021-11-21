@@ -8,57 +8,73 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class AgodaSearchHotelRoomPage extends AbstractPage
-{
-    public static String SEARCH_HOTEL_ROOM_PAGE_URL = "https://www.agoda.com/ru-ru/";
+import java.time.Duration;
 
-    By toInputLocator = By.xpath("//*[@id=\"SearchBoxContainer\"]/div[1]/div/div[2]/div/div/div[1]/div/div/input");
-    private WebElement toInput;
+public class AgodaSearchHotelRoomPage extends AbstractPage {
+    //*[@id="searchPageLeftColumn"]/div[2]/div[2]/div[2]/ul/li[3]/span/span[1]/span
+    private static final String SEARCH_HOTEL_ROOM_PAGE_URL = "https://www.agoda.com/ru-ru/";
+    private static final String DEPARTURE_CITY = "//*[@id=\"SearchBoxContainer\"]/div[1]/div/div[2]/div/div/div[1]/div/div/input";
+    private static final String BUTTON_SEARCH = "//*[@id=\"SearchBoxContainer\"]/div[2]/button";
+    private static final String BUTTON_MEANING = "//*[@id=\"city-0\"]/a/div/h3/a";
+    private static final String DEPARTURE_STRING = "//*[@id=\"SearchBoxContainer\"]/div/div/div[1]/div/div/div/div[1]";
+    private static final String FOUR_STARS_CHECKBOX = "//*[@id=\"searchPageLeftColumn\"]/div[2]/div[3]/div[2]/ul/li[1]/span/span[1]/span";
 
-    By findButtonLocator = By.xpath("//*[@id=\"SearchBoxContainer\"]/div[2]/button");
-    private WebElement findButton;
+
+
+
+    @FindBy(xpath = "//*[@id=\"SearchBoxContainer\"]/div[1]/div/div[2]/div/div/div[1]/div/div/input")
+    private WebElement searchInputDepartureCity;
+
+    @FindBy(xpath = "//*[@id=\"SearchBoxContainer\"]/div[2]/button")
+    private WebElement searchButton;
+
+    @FindBy(xpath = "//*[@id=\"city-0\"]/a/div/h3/a")
+    private WebElement searchMeaningButton;
+
+    @FindBy(xpath = "//*[@id=\"SearchBoxContainer\"]/div/div/div[1]/div/div/div/div[1]")
+    private WebElement searchDepartureString;
+
+    @FindBy(xpath = "//*[@id=\"searchPageLeftColumn\"]/div[2]/div[3]/div[2]/ul/li[1]/span/span[1]/span")
+    private WebElement searchFourStarsCheckbox;
 
     public AgodaSearchHotelRoomPage(WebDriver driver)
     {
         super(driver);
     }
 
-    public AgodaSearchHotelRoomPage openPage()
-    {
+    public AgodaSearchHotelRoomPage openPage() {
         driver.get(SEARCH_HOTEL_ROOM_PAGE_URL);
-        toInput = findElementByLocator(toInputLocator);
-        findButton = findElementByLocator(findButtonLocator);
+        new WebDriverWait(driver, Duration.ofSeconds(WAIT_TIMEOUT_SECONDS))
+                .until(ExpectedConditions.presenceOfElementLocated(By.xpath(DEPARTURE_CITY)));
         return this;
     }
 
-    public AgodaSearchHotelRoomPage enterTo(String to)
-    {
-        toInput.sendKeys(to);
-        WebElement listElement = getMatchingListElement(to);
-        listElement.click();
+    public AgodaSearchHotelRoomPage  searchInputDeparture(String departureCity) {
+        searchInputDepartureCity.sendKeys(departureCity);
+        new WebDriverWait(driver, Duration.ofSeconds(WAIT_TIMEOUT_SECONDS))
+                .until(ExpectedConditions.presenceOfElementLocated(By.xpath(BUTTON_SEARCH)));
         return this;
     }
 
-    public AgodaSearchHotelRoomPage submit()
-    {
-        findButton.click();
+    public String getDepartureString() {
+        return searchDepartureString.getText();
+    }
+
+    public AgodaSearchHotelRoomPage clickButtonToCheckTheHotelNumber() {
+        searchButton.click();
+        new WebDriverWait(driver, Duration.ofSeconds(WAIT_TIMEOUT_SECONDS))
+                .until(ExpectedConditions.presenceOfElementLocated(By.xpath(BUTTON_MEANING)));
         return this;
     }
 
-    public String getDestination()
-    {
-        return getElement("//*[@id=\"SearchBoxContainer\"]/div[1]/div/div[2]/div/div/div[1]/div/div/input").getText();
+    public AgodaSearchHotelRoomPage clickButtonMeaning() {
+        searchMeaningButton.click();
+        return this;
+    }
+    public AgodaSearchHotelRoomPage clickFourStarsCheckbox() {
+        searchFourStarsCheckbox.click();
+        return this;
     }
 
-    private WebElement getMatchingListElement(String name)
-    {
-        new WebDriverWait(driver, WAIT_TIMEOUT_SECONDS).until(ExpectedConditions.textToBe(By.xpath("//div[contains(text(), 'London, England')]"), name));
-        return driver.findElement(By.xpath("//div[@class='recent-search-terms']/descendant::div[1]"));
-    }
 
-    private WebElement getElement(String xpath)
-    {
-        new WebDriverWait(driver, WAIT_TIMEOUT_SECONDS).until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
-        return driver.findElement(By.xpath(xpath));
-    }
 }
