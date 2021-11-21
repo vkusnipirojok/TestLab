@@ -36,7 +36,7 @@ public class AgodaSearchHotelRoomPageTest
                 .clickButtonMeaning()
                 .clickFourStarsCheckbox();
 
-        Thread.sleep(10000);
+        //Thread.sleep(10000);
         Assert.assertEquals(searchHotelRoomPage.getDepartureString(),DEPARTURE_PLACE);
     }
 
